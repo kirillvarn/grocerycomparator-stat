@@ -46,12 +46,6 @@ def connect(retries=0, db='products'):
         raise error
 
 
-'''
-    PARAMETERS: psycopg2 connection to the database
-    RETURN: a list of all tables in a db in ascending order
-'''
-
-
 def get_tables(conn: connection) -> list[str]:
     query_st: str = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name != 'updatedates' ORDER BY table_name ASC "
     cursor = conn.cursor()
