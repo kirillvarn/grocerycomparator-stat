@@ -50,7 +50,10 @@ def get_tables(conn: connection) -> list[str]:
     query_st: str = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name != 'updatedates' ORDER BY table_name ASC "
     cursor = conn.cursor()
     cursor.execute(query_st)
-    return cursor.fetchall()
+    fetched_data = cursor.fetchall()
+    fetched_data.pop()
+    fetched_data.insert(0, ("initial_products", ))
+    return fetched_data
 
 
 def get_product(conn: connection) -> list[dict]:
@@ -67,7 +70,7 @@ def get_product(conn: connection) -> list[dict]:
         else:
             cursor.execute(query, (table_key,))
 
-        normalized_data = {(v[0] if v[3] == "selver" else v[1]): {
+        normalized_data = {v[1]: {
             "id": v[0], "name": v[1], "price": v[2], "shop": v[3], "discount": v[4]} for v in cursor.fetchall()}
 
         data[table_key] = normalized_data
@@ -89,16 +92,11 @@ def get_prices(conn: connection) -> dict[dict]:
     for d_key in data_keys:
         create_flag = False
         for item in products[d_key]:
-            if products[d_key][item]["shop"] == "selver":
-                key = f"{item}, {products[d_key][item]['name']}"
-            else:
-                key = item
-            # if key not in price_data:
-            if not create_flag:
+            key = item
+
+            if not create_flag and key not in price_data:
                 price_data[key] = {v: None for v in data_keys}
                 create_flag != create_flag
-            # if key not in price_data:
-                # price_data[key] = {d_key: ""}
 
             try:
                 price_data[key][d_key] = products[d_key][item]['price']
