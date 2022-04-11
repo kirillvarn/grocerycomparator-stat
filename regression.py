@@ -7,6 +7,10 @@ import main
 import datetime as dt
 from matplotlib.ticker import FormatStrFormatter
 from datetime import datetime
+import export.excel as excel
+
+
+dataset = main.get_prices(main.connect())[1]
 
 
 def datetime_to_epoch(datetimes: list) -> list:
@@ -19,29 +23,43 @@ def datetime_to_epoch(datetimes: list) -> list:
     return epochs
 
 
-dataset = main.get_prices(main.connect())[1]
+def get_data() -> dict:
+    pass
 
-lenDict = dict()
-for item in dataset:
-    notNone = [value for value in dataset[item]
-               if dataset[item][value] != None]
-    if len(notNone) > 1:
-        lenDict[item] = len(notNone)
 
-sorted_tuple_desc = sorted(lenDict.items(), key=lambda item: item[1])
-names = [item[0] for item in sorted_tuple_desc if item[1] < 8][-10:]
+def save_to_excel(dataset):
+    tables = [i[0] for i in main.get_tables(main.connect())]
+    tables.remove('initial_products')
+    header = ['Product name', '2022-03-06'] + tables
+    data = []
 
-top_list = list()
-for i in names:
-    top_list.append(dataset[i])
+    for item in dataset:
+        value = [item] + [dataset[item][value] for value in dataset[item]]
+        data.append(value)
+    excel.save(data, "data", header)
 
-chosen_item = dataset["977184, Kihiline suitsukalasalat 500 g"]
-dates = [i for i in chosen_item]
-epochs = datetime_to_epoch(dates)
 
-values = [chosen_item[i] for i in chosen_item]
+def plot():
+    chosen_item = dataset["977184, Kihiline suitsukalasalat 500 g"]
 
-plt.plot(epochs, values, 'o')
-plt.show()
+    dates = [i for i in chosen_item]
+    epochs = datetime_to_epoch(dates)
+
+    values = [chosen_item[i] for i in chosen_item]
+
+    plt.plot(epochs, values, 'o')
+    plt.show()
+
+
+save_to_excel(dataset)
+
+# lenDict = dict()
+# for item in dataset:
+#     notNone = [value for value in dataset[item]
+#                if dataset[item][value] != None]
+#     if len(notNone) > 1:
+#         lenDict[item] = len(notNone)
+
+
 # df = pd.DataFrame(data=top_list, index=names)
 # print(df)
