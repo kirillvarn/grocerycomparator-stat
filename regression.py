@@ -1,16 +1,28 @@
-import numpy as np
-import pandas as pd
-import math
-import random
 import matplotlib.pyplot as plt
 import main
-import datetime as dt
-from matplotlib.ticker import FormatStrFormatter
 from datetime import datetime
 import export.excel as excel
+import export.csv as csv
+from export.gdrive import save_to_drive
+
+# CONSTANTS
+items_to_parse = {
+    "milk": "Piim ",
+    "eggs": "Munad",
+    "wheat": "nisujahu",
+    "tomatoes": "tomat ",
+    "cucumber": "kurk ",
+}
+table = excel.Excel()
+table.create_sheets(items_to_parse.keys())
 
 
-dataset = main.get_prices(main.connect())[1]
+def get_products():
+    return main.get_prices(main.connect())[1]
+
+
+def get_products_by_name(name):
+    return main.get_prices(main.connect(), name)[1]
 
 
 def datetime_to_epoch(datetimes: list) -> list:
@@ -27,19 +39,54 @@ def get_data() -> dict:
     pass
 
 
-def save_to_excel(dataset):
+def get_normalized_price(data: list) -> list:
+    new_data = list()
+    for index, item in enumerate(data):
+        if index != 0 and data[index] == None:
+            new_data.append(new_data[index - 1])
+        else:
+            new_data.append(item)
+
+    return new_data
+
+
+def save_to_excel(dataset, sheet_name: str = "Sheet") -> None:
     tables = [i[0] for i in main.get_tables(main.connect())]
-    tables.remove('initial_products')
-    header = ['Product name', '2022-03-06'] + tables
+    tables.remove("initial_products")
+    header = ["Product name", "Shop name", "2022-03-06"] + tables
     data = []
 
     for item in dataset:
-        value = [item] + [dataset[item][value] for value in dataset[item]]
+        prices = get_normalized_price(
+            [dataset[item]["prices"][value] for value in dataset[item]["prices"]]
+        )
+        value = [item, dataset[item]["shop"]] + prices
         data.append(value)
-    excel.save(data, "data", header)
+
+    table.append_header(header, sheet_name)
+    table.put_data(data, sheet_name)
 
 
-def plot():
+def save_to_csv(dataset) -> None:
+    data = []
+
+    tables = [i[0] for i in main.get_tables(main.connect())]
+    tables.remove("initial_products")
+    header = ["Product name", "Shop name", "2022-03-06"] + tables
+
+    data.append(header)
+
+    for item in dataset:
+        prices = get_normalized_price(
+            [dataset[item]["prices"][value] for value in dataset[item]["prices"]]
+        )
+        value = [item, dataset[item]["shop"]] + prices
+        data.append(value)
+
+    csv.write_to_csv("data.csv", data)
+
+
+def plot() -> None:
     chosen_item = dataset["977184, Kihiline suitsukalasalat 500 g"]
 
     dates = [i for i in chosen_item]
@@ -47,19 +94,15 @@ def plot():
 
     values = [chosen_item[i] for i in chosen_item]
 
-    plt.plot(epochs, values, 'o')
+    plt.plot(epochs, values, "o")
     plt.show()
 
 
-save_to_excel(dataset)
+for item in items_to_parse:
+    products = get_products_by_name(items_to_parse[item])
+    save_to_excel(products, item)
+    save_to_csv(products)
 
-# lenDict = dict()
-# for item in dataset:
-#     notNone = [value for value in dataset[item]
-#                if dataset[item][value] != None]
-#     if len(notNone) > 1:
-#         lenDict[item] = len(notNone)
-
-
-# df = pd.DataFrame(data=top_list, index=names)
-# print(df)
+table.save()
+save_to_drive("data.xlsx", "xlsx")
+save_to_drive("data.csv", "csv")

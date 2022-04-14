@@ -25,12 +25,9 @@ connection = psycopg2.extensions.connection
 
 
 def connect(retries=0, db='products'):
-    print(f"{Fore.GREEN}[INFO] Connecting to {db} database!{Style.RESET_ALL}")
     try:
         CONNECTION = psycopg2.connect(dbname=db, user=user_data['username'],
                                       password=user_data['password'], host=user_data['host'], port=user_data['port'])
-        print(
-            f"{Fore.GREEN}[INFO] Connected to {db} database!{Style.RESET_ALL}")
         retries = 0
         return CONNECTION
     except psycopg2.OperationalError as error:
@@ -56,19 +53,22 @@ def get_tables(conn: connection) -> list[str]:
     return fetched_data
 
 
-def get_product(conn: connection) -> list[dict]:
+def get_product(conn: connection, search_string: str) -> list[dict]:
     tables = get_tables(conn)
     data = dict()
-    query_str: str = "SELECT * FROM initial_products"
-    query_date: str = 'SELECT * FROM "%s" WHERE price != 0'
+
+    like_pattern = f"%{search_string}%"
+
+    query_str: str = "SELECT * FROM initial_products WHERE name ILIKE %s"
+    query_date: str = 'SELECT * FROM "%s" WHERE price != 0 AND name ILIKE %s'
     for table in tables:
         cursor = conn.cursor()
         table_key = table[0].replace("'", "")
         query = query_str if table_key == "initial_products" else query_date
         if table_key == "initial_products":
-            cursor.execute(query)
+            cursor.execute(query, (like_pattern, ))
         else:
-            cursor.execute(query, (table_key,))
+            cursor.execute(query, (table_key, like_pattern))
 
         normalized_data = {v[1]: {
             "id": v[0], "name": v[1], "price": v[2], "shop": v[3], "discount": v[4]} for v in cursor.fetchall()}
@@ -82,9 +82,9 @@ def get_names_and_ids(data: list[tuple]) -> list:
     return list(map(lambda x: x[0] if x[3] == "selver" else x[1], data))
 
 
-def get_prices(conn: connection) -> dict[dict]:
+def get_prices(conn: connection, search_string: str = "") -> dict[dict]:
 
-    products = get_product(conn)
+    products = get_product(conn, search_string)
     data_keys = list(products.keys())
 
     price_data = dict()
@@ -95,11 +95,13 @@ def get_prices(conn: connection) -> dict[dict]:
             key = item
 
             if not create_flag and key not in price_data:
-                price_data[key] = {v: None for v in data_keys}
+                price_data[key] = {'prices': {}}
+                price_data[key]['prices'] = {v: None for v in data_keys}
                 create_flag != create_flag
 
             try:
-                price_data[key][d_key] = products[d_key][item]['price']
+                price_data[key]['prices'][d_key] = products[d_key][item]['price']
             except:
-                price_data[key][d_key] = None
+                price_data[key]['prices'][d_key] = None
+            price_data[key]['shop'] = products[d_key][item]['shop']
     return data_keys, price_data
