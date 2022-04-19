@@ -48,27 +48,29 @@ def get_tables(conn: connection) -> list[str]:
     cursor = conn.cursor()
     cursor.execute(query_st)
     fetched_data = cursor.fetchall()
-    fetched_data.pop()
-    fetched_data.insert(0, ("initial_products", ))
     return fetched_data
 
 
-def get_product(conn: connection, search_string: str) -> list[dict]:
+def get_product(conn: connection, search_string: str = '', query: str = '') -> list[dict]:
     tables = get_tables(conn)
     data = dict()
 
-    like_pattern = f"%{search_string}%"
+    if len(search_string) != 0:
+        like_pattern = f"%{search_string}%"
+        like_pattern_comma = f"%{search_string.strip()},%"
 
-    query_str: str = "SELECT * FROM initial_products WHERE name ILIKE %s"
-    query_date: str = 'SELECT * FROM "%s" WHERE price != 0 AND name ILIKE %s'
+        query: str = 'SELECT * FROM "%s" WHERE price != 0 AND name ILIKE %s or name ILIKE %s'
+
     for table in tables:
         cursor = conn.cursor()
         table_key = table[0].replace("'", "")
-        query = query_str if table_key == "initial_products" else query_date
-        if table_key == "initial_products":
-            cursor.execute(query, (like_pattern, ))
+
+        if len(search_string) != 0:
+            query_params = (table_key, like_pattern, like_pattern_comma)
         else:
-            cursor.execute(query, (table_key, like_pattern))
+            query_params = (table_key, )
+
+        cursor.execute(query, query_params)
 
         normalized_data = {v[1]: {
             "id": v[0], "name": v[1], "price": v[2], "shop": v[3], "discount": v[4]} for v in cursor.fetchall()}
@@ -82,9 +84,12 @@ def get_names_and_ids(data: list[tuple]) -> list:
     return list(map(lambda x: x[0] if x[3] == "selver" else x[1], data))
 
 
-def get_prices(conn: connection, search_string: str = "") -> dict[dict]:
+def get_prices(conn: connection, search_string: str = "", query: str = "") -> dict[dict]:
+    if len(search_string) != 0:
+        products = get_product(conn, search_strin=search_string)
+    else:
+        products = get_product(conn, query=query)
 
-    products = get_product(conn, search_string)
     data_keys = list(products.keys())
 
     price_data = dict()
