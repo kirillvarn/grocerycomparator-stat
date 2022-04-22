@@ -89,19 +89,20 @@ def get_prices(conn: connection, search_string: str = "", query: str = "") -> di
         products = get_product(conn, search_strin=search_string)
     else:
         products = get_product(conn, query=query)
+    print(f"products length is {len(products)}")
 
-    data_keys = list(products.keys())
+    date_keys = list(products.keys())
 
     price_data = dict()
 
-    for d_key in data_keys:
+    for d_key in date_keys:
         create_flag = False
         for item in products[d_key]:
             key = item
 
             if not create_flag and key not in price_data:
                 price_data[key] = {'prices': {}}
-                price_data[key]['prices'] = {v: None for v in data_keys}
+                price_data[key]['prices'] = {v: None for v in date_keys}
                 create_flag != create_flag
 
             try:
@@ -109,4 +110,4 @@ def get_prices(conn: connection, search_string: str = "", query: str = "") -> di
             except:
                 price_data[key]['prices'][d_key] = None
             price_data[key]['shop'] = products[d_key][item]['shop']
-    return data_keys, price_data
+    return date_keys, price_data

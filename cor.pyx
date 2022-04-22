@@ -1,9 +1,13 @@
+from libc.stdlib cimport malloc, free
 from sklearn.linear_model import LinearRegression
 import json
 import os
 import pandas as pd
 import numpy as np
+
+# C imports
 cimport numpy as np
+
 np.import_array()
 
 # sklearn
@@ -22,19 +26,10 @@ cdef dict query_to_parse = {
     "all": 'SELECT * FROM "%s" WHERE price != 0 AND discount = false',
 }
 
-try:
-    os.remove("correlation_lower_half.json")
-except FileNotFoundError:
-    pass
-
-try:
-    os.remove("correlation_upper_half.json")
-except FileNotFoundError:
-    pass
-
-
-cpdef list regression(bint onefile=True, onefilename=""):
-    cdef list correlation = []
+cpdef list regression(bint onefile=True, str onefilename=""):
+    cdef list correlation
+    cdef str file
+    cdef list files
 
     if onefile == False:
         files = [f"{i}.csv" for i in query_to_parse]
@@ -46,25 +41,24 @@ cpdef list regression(bint onefile=True, onefilename=""):
         correlation = linear(onefilename)
     return correlation
 
-cpdef void write_to_file(filename, dict data):
+cpdef void write_to_file(str filename, data):
     filename = filename.split(".")[0]
     with open(f"correlation_{filename}.json", "w", encoding='UTF8') as f:
         jsob = json.dumps(data, ensure_ascii=False)
         f.write(jsob)
 
-cpdef list linear(filename):
-    data = pd.read_csv(filename, dtype=np.float16)
-
-    cdef list correlation = []
-
-    keys = data.keys()
-
-    cdef unsigned short key_range = keys.size
-
+cpdef list linear(str filename):
     # VARIABLE DECLARATIONS
-    cdef int key, j
-    cdef np.float32_t r2
-    cdef np.ndarray y, x
+    cdef list correlation = []
+    cdef list keys
+    cdef unsigned short key_range, key, j
+    cdef float r2
+    cdef np.ndarray[np.float32_t, ndim = 1] y, x
+    cdef dict cor_d
+
+    data = pd.read_csv(filename, dtype=np.float32)
+    keys = data.keys().tolist()
+    key_range = len(keys)
 
     for key in range(key_range):
         y = np.array(data.iloc[:, key])
@@ -78,13 +72,39 @@ cpdef list linear(filename):
                 r2 = reg.score(x.reshape(-1, 1), y)
 
                 if r2 > 0 and r2 <= 0.95:
-                    correlation.append(
-                        {"dependent": data.columns[key], "independent": data.columns[j], "score": r2})
+                    cor_d = {
+                        "dependent": data.columns[key], "independent": data.columns[j], "score": r2}
+                    correlation.append(cor_d)
 
     return correlation
 
+# each dependent is being regressed to whole independent dataset
+cpdef void correlate(str dependent, str independent):
+    cdef list correlation = []
+    cdef dict cor_d
+    cdef str y, x
+    cdef np.ndarray[np.float32_t, ndim=2] resp
+    cdef np.ndarray[np.float32_t, ndim=1] pred
+    cdef float score
 
-def run(filename):
+    dependent_data = pd.read_csv(dependent, dtype=np.float32)
+    independent_data = pd.read_csv(independent, dtype=np.float32)
+
+    for y in dependent_data:
+        for x in independent_data:
+            resp = dependent_data[y].values.reshape(-1, 1)
+            pred = independent_data[x].values
+
+            reg = LinearRegression()
+            reg.fit(resp, pred)
+
+            score = reg.score(resp, pred)
+            if score > 0.4 and score <= 0.95:
+                cor_d = { "dependent": y, "independent": x, "score": score, "response": resp.flatten().tolist(), "predictor": pred.tolist()}
+                correlation.append(cor_d)
+    write_to_file(dependent, correlation)
+
+cpdef void run(str filename):
     cdef dict cor
 
     for cor in regression(onefile=True, onefilename=filename):
