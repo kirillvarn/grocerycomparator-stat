@@ -73,7 +73,7 @@ def get_product(conn: connection, search_string: str = '', query: str = '') -> l
         cursor.execute(query, query_params)
 
         normalized_data = {v[1]: {
-            "id": v[0], "name": v[1], "price": v[2], "shop": v[3], "discount": v[4]} for v in cursor.fetchall()}
+            "id": v[0], "name": v[1], "price": round(v[2], 2), "shop": v[3], "discount": v[4]} for v in cursor.fetchall()}
 
         data[table_key] = normalized_data
     cursor.close()
