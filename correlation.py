@@ -24,5 +24,5 @@ from cor import correlate, correlate_by_one
 
 
 # correlate_by_one("cake.csv", ["wheat.csv", "milk.csv"])
-# correlate_by_one("pizza.csv", ["wheat.csv", "pig meat.csv"])
-correlate_by_one("rimi milk.csv", ["other shop milk.csv"])
+correlate_by_one("pizza.csv", ["wheat.csv", "beef.csv"])
+# correlate_by_one("rimi milk.csv", ["other shop milk.csv"])

@@ -15,7 +15,6 @@ venv/
 token.json
 
 # output data
-*.csv*
 *.xlsx*
 
 # build/compiled stuff
