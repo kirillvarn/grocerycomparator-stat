@@ -33,3 +33,6 @@ token.json
 build
 bin
 .vscode
+*.sh
+*_mean*
+*.so

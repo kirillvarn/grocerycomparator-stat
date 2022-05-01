@@ -23,7 +23,7 @@ cpdef void write_to_file(str filename, data, list correlate_to=[]):
         f.write(jsob)
 
 
-cpdef void correlate_by_one(str dependent_file, list independent_files):
+cpdef void correlate_by_one(str dependent_file, list independent_files, bint allow_same=False):
     cdef list correlation = []
     cdef list headers = []
     cdef np.ndarray[object, ndim=2] i_files_product
@@ -67,7 +67,7 @@ cpdef void correlate_by_one(str dependent_file, list independent_files):
             print ("\033[A                             \033[A")
             print(f"{process}/{completion_p} done.")
             y = dependent_data.iloc[:, dep].values
-            if len(set(y)) > 1:
+            if len(set(y)) > 1 or allow_same:
                 dataf = pd.DataFrame()
                 t_array = i_files_product[prod_tuple]
 
