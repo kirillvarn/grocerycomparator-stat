@@ -3,7 +3,7 @@ import seaborn as sns
 import json
 import matplotlib.pyplot as plt
 
-from cor import correlate, correlate_by_one
+from cormodule.cor import correlate, correlate_by_one
 
 # csv_files = [file for file in os.listdir("./") if file.endswith(".csv")]
 
@@ -23,6 +23,11 @@ from cor import correlate, correlate_by_one
 # correlate("cake.csv", ["wheat.csv", "milk.csv", "eggs.csv"])
 
 
-# correlate_by_one("cake.csv", ["wheat.csv", "milk.csv"])
-correlate_by_one("pizza.csv", ["wheat.csv", "beef.csv"])
+# correlate_by_one("datasets/rimi milk.csv", ["datasets/apple.csv", "datasets/eggs.csv", "datasets/beef.csv"])
+
+# correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/beef.csv"])
+# correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/pig meat.csv"])
+correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/chicken.csv"])
+# correlate_by_one("datasets/cake.csv", ["datasets/wheat.csv", "datasets/milk.csv"])
+
 # correlate_by_one("rimi milk.csv", ["other shop milk.csv"])

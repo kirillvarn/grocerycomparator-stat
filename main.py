@@ -89,7 +89,6 @@ def get_prices(conn: connection, search_string: str = "", query: str = "") -> di
         products = get_product(conn, search_strin=search_string)
     else:
         products = get_product(conn, query=query)
-    print(f"products length is {len(products)}")
 
     date_keys = list(products.keys())
 

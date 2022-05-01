@@ -26,22 +26,20 @@ milk_q = "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name I
 wheat_kilos = 1
 query_to_parse: dict = {
     # "milk": milk_q,
-    #"rimi milk": f"{milk_q} AND shop ILIKE '%%rimi%%'",
-    #"other shop milk": f"{milk_q} AND shop NOT ILIKE '%%rimi%%'",
-    ##"milk": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%1l%%' OR name ILIKE '%%1 l%%') AND (name ILIKE '%%piim %%' OR name ILIKE '%%piim,%%') AND name NOT ILIKE '%%juust%%' AND name NOT ILIKE '%%kohupiim%%' AND name NOT ILIKE '%%laktoos%%' AND name NOT ILIKE '%%täis%%' AND name NOT ILIKE '%%kookos%%' AND name NOT ILIKE '%%latte%%' AND (name ILIKE '%%2,5%%' OR name ILIKE '%%2.5%%')",
-    #"milk": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%1l%%' OR name ILIKE '%%1 l%%') AND (name ILIKE '%%piim %%' OR name ILIKE '%%piim,%%') AND name NOT ILIKE '%%juust%%' AND name NOT ILIKE '%%kohupiim%%' AND name NOT ILIKE '%%laktoos%%' AND name NOT ILIKE '%%täis%%' AND name NOT ILIKE '%%kookos%%' AND name NOT ILIKE '%%latte%%' AND (name ILIKE '%%2,5%%' OR name ILIKE '%%2.5%%')",
-    #"eggs": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%munad %%' OR name ILIKE '%%munad, %%' OR name ILIKE '%%muna,%%') AND name NOT ilike '%%salvrät%%' AND name NOT ILIKE '%%Šokolaad%%' AND name NOT ILIKE '%%Martsipani%%' AND name NOT ILIKE '%%SELVERI KÖÖK%%' AND name NOT ILIKE '%%kitkat%%'" ,
-    "wheat": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%{wheat_kilos}kg%%' OR name ILIKE '%%{wheat_kilos} kg%%') AND (name ILIKE '%%nisujahu %%' OR name ILIKE '%%nisujahu,%%')",
-    #"beef": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%veise %%' OR name ILIKE '%%veisepraad%%' OR name ILIKE '%%lihaveise%%') AND name NOT ILIKE '%%koera%%' AND name NOT ILIKE '%%pelmeen%%' AND name NOT ILIKE '%%põltsama%%' AND name NOT ILIKE '%%sink%%'"
-    #"tomatoes": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%tomat %%' OR name ILIKE '%%tomat, %%') AND name NOT ILIKE '%%pasta%%' AND name NOT ILIKE '%%0g%%' AND name NOT ILIKE '%%0 g%%' AND name NOT ILIKE '%%harilik%%' AND name NOT ILIKE '%%krõpsud%%' AND name NOT ILIKE '%%marinaad%%' AND name NOT ILIKE '%%eine%%'",
-    #"cucumber": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%kurk %%' OR name ILIKE '%%kurk,%%')",
-    #"banana": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%kg%%' OR name ILIKE '%%chiq%%') AND (name ILIKE '%%banaan %%' OR name ILIKE '%%banaan,%%')",
-    #"apple": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%õun %%' OR name ILIKE '%%õun,%%')",
-    #"pear": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%pirn %%' OR name ILIKE '%%pirn,%%')",
-    # #"all": f"SELECT * FROM \"%s\" WHERE price != 0 AND price < 50 AND discount = false {joined_st}",
-    "pizza": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%pizza%%' OR name ILIKE '%%pitsa%%' AND name NOT ILIKE '%%pitsama%%')",
-    #"pig meat": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%sea kaela%%' OR name ILIKE '%%sea välisfilee%%' OR name ILIKE '%%sea sisefilee%%')",
-    #"cake": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%kook,%%' OR name ILIKE '%%kook%%') AND name NOT ILIKE '%%van kook%%' AND name NOT ILIKE '%%selveri köök%%' AND name NOT ILIKE '%%kookos%%' AND name NOT LIKE '%%smuuti%%' AND name NOT ILIKE '%%pannkook%%'"
+    # "rimi milk": f"{milk_q} AND shop ILIKE '%%rimi%%'",
+    # "other shop milk": f"{milk_q} AND shop NOT ILIKE '%%rimi%%'",
+    # "eggs": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%munad %%' OR name ILIKE '%%munad, %%' OR name ILIKE '%%muna,%%') AND name NOT ilike '%%salvrät%%' AND name NOT ILIKE '%%Šokolaad%%' AND name NOT ILIKE '%%Martsipani%%' AND name NOT ILIKE '%%SELVERI KÖÖK%%' AND name NOT ILIKE '%%kitkat%%'" ,
+    # "wheat": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%{wheat_kilos}kg%%' OR name ILIKE '%%{wheat_kilos} kg%%') AND (name ILIKE '%%nisujahu %%' OR name ILIKE '%%nisujahu,%%')",
+    # "beef": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%veise %%' OR name ILIKE '%%veisepraad%%' OR name ILIKE '%%lihaveise%%') AND name NOT ILIKE '%%koera%%' AND name NOT ILIKE '%%pelmeen%%' AND name NOT ILIKE '%%põltsama%%' AND name NOT ILIKE '%%sink%%'",
+    # "tomatoes": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%tomat %%' OR name ILIKE '%%tomat, %%') AND name NOT ILIKE '%%pasta%%' AND name NOT ILIKE '%%0g%%' AND name NOT ILIKE '%%0 g%%' AND name NOT ILIKE '%%harilik%%' AND name NOT ILIKE '%%krõpsud%%' AND name NOT ILIKE '%%marinaad%%' AND name NOT ILIKE '%%eine%%'",
+    # "cucumber": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%kurk %%' OR name ILIKE '%%kurk,%%')",
+    # "banana": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%kg%%' OR name ILIKE '%%chiq%%') AND (name ILIKE '%%banaan %%' OR name ILIKE '%%banaan,%%')",
+    # "apple": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%õun %%' OR name ILIKE '%%õun,%%')",
+    # "pear": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%kg%%' AND (name ILIKE '%%pirn %%' OR name ILIKE '%%pirn,%%')",
+    # "pizza": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%pizza%%' OR name ILIKE '%%pitsa%%' AND name NOT ILIKE '%%pitsama%%')",
+    # "pig meat": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%sea kaela%%' OR name ILIKE '%%sea välisfilee%%' OR name ILIKE '%%sea sisefilee%%')",
+    # "cake": f"SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%kook,%%' OR name ILIKE '%%kook%%') AND name NOT ILIKE '%%van kook%%' AND name NOT ILIKE '%%selveri köök%%' AND name NOT ILIKE '%%kookos%%' AND name NOT LIKE '%%smuuti%%' AND name NOT ILIKE '%%pannkook%%'",
+    "chicken": "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%broileri rinnafilee%%' OR name ILIKE '%%pooltiivad%%' OR name ILIKE '%%poolkoivad%%' OR name ILIKE '%%kanafilee%%' OR name ILIKE '%%broilerifilee%%') AND name NOT ILIKE '%%HAU-HAU%%'"
 }
 '''
 table = excel.Excel()
@@ -115,7 +113,7 @@ def save_to_csv(filename, dataset) -> None:
 
         data.append(value)
 
-    csv.write_to_csv(f"{filename}.csv", zip(*data))
+    csv.write_to_csv(f"datasets/{filename}.csv", zip(*data))
 
 
 

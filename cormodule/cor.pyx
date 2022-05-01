@@ -12,6 +12,8 @@ cimport numpy as np
 np.import_array()
 
 cpdef void write_to_file(str filename, data, list correlate_to=[]):
+    correlate_to = [x.split("/")[1] for x in correlate_to]
+    filename = filename.split("/")[1]
     cdef str c_to_string = "_".join(correlate_to)
     fname = filename if len(
         correlate_to) == 0 else f"correlation_{filename}_to_{c_to_string}"
@@ -23,7 +25,8 @@ cpdef void write_to_file(str filename, data, list correlate_to=[]):
 
 cpdef void correlate_by_one(str dependent_file, list independent_files):
     cdef list correlation = []
-    cdef np.ndarray i_files_product
+    cdef list headers = []
+    cdef np.ndarray[object, ndim=2] i_files_product
     cdef list i_fname
     cdef dict cor_d
     cdef str filename = dependent_file.split(".")[0]
@@ -39,7 +42,7 @@ cpdef void correlate_by_one(str dependent_file, list independent_files):
     headers = [list(x.keys()) for x in from_files_data]
 
     dataset = pd.concat(from_files_data)
-    i_files_product = np.array(tuple(itertools.product(*headers)))
+    i_files_product = np.array(tuple(itertools.product(*headers)), dtype=object)
 
     i_fname = [x.split(".")[0] for x in independent_files]
 
@@ -50,6 +53,12 @@ cpdef void correlate_by_one(str dependent_file, list independent_files):
     cdef float score
     cdef dict param_coef_l = {}
     cdef float[:] coeff
+    cdef unsigned short produc_len = dependent_data.shape[0]
+    cdef np.ndarray[np.float32_t, ndim=1] y
+    cdef np.ndarray[np.str, ndim=1] t_array
+    cdef str t_val
+    cdef np.ndarray[float, ndim=1] arr, y_pred
+    cdef unsigned short cf
 
     print("")
     for dep in range(dependent_arr):
@@ -57,17 +66,18 @@ cpdef void correlate_by_one(str dependent_file, list independent_files):
             param_coef_l = {}
             print ("\033[A                             \033[A")
             print(f"{process}/{completion_p} done.")
-            y = dependent_data.iloc[:, dep]
-
+            y = dependent_data.iloc[:, dep].values
             if len(set(y)) > 1:
                 dataf = pd.DataFrame()
                 t_array = i_files_product[prod_tuple]
-                for t_val in t_array.tolist():
+
+                for t_val in t_array:
                     arr = np.array(dataset[t_val].values)
                     dataf.insert(0, t_val, arr[~np.isnan(arr)])
 
                 x = dataf
                 x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0)
+
                 reg = LinearRegression()
                 reg.fit(x_train, y_train)
                 coeff = reg.coef_
