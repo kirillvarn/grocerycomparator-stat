@@ -10,16 +10,16 @@ import csv
 # sns.set_context("paper")
 plt.style.use(['science'])
 
-topmost = [
-    "498187, Šokolaadikook, ERIK ORGU, 325 g",
-    "31655, Erik Orgu kohupiimakook, ERIK ORGU, 325 g",
-    "984488, Toorjuustukook sidrunimaitseline Farmi 250g"]
+# topmost = [
+#     "498187, Šokolaadikook, ERIK ORGU, 325 g",
+#     "31655, Erik Orgu kohupiimakook, ERIK ORGU, 325 g",
+#     "984488, Toorjuustukook sidrunimaitseline Farmi 250g"]
 
 
-lowmost = [
-    "Pasha kook 300 g, EESTI PAGAR",
-    "Napoleoni kook EESTI PAGAR, 1.2kg",
-    "Meekook EESTI PAGAR, 1kg"]
+# lowmost = [
+#     "Pasha kook 300 g, EESTI PAGAR",
+#     "Napoleoni kook EESTI PAGAR, 1.2kg",
+#     "Meekook EESTI PAGAR, 1kg"]
 
 # topmost = [
 # "5282, Pitsapõhjapulber, VILMA, 400 g",
@@ -52,7 +52,7 @@ lowmost = [
 #     "812436, Pitsa Rimi Basic singi ja seente 325g"
 # ]
 
-plottable = [topmost, lowmost]
+# plottable = [topmost, lowmost]
 
 
 #lottable = ["32239, Šokolaadi-Napoleoni kook, EESTI PAGAR, 400 g", "Küpsisekook 280 g, EESTI PAGAR", "810062, Maasika-jogurtikook Rimi 350g", "32779, Mustasõstra-passionikook, PAGARINI, 300 g", "812238, Britta kook Rimi 300g"]
@@ -65,12 +65,14 @@ font = {'family': 'monospace',
         'size': 20}
 
 
-def scatter_reg(filename, csv_filenames):
+PLOT_MARGIN = 0.1
+
+def scatter_reg(filename, csv_filenames, plottable):
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     # dep_names = list(set([i['dependent'] for i in data]))
-    dep_names = plottable
+    # dep_names = plottable
 
     pl_list = []
     for p_item in plottable:
@@ -92,8 +94,8 @@ def scatter_reg(filename, csv_filenames):
     from_files_data = [pd.read_csv(f, dtype=np.float32) for f in csv_filenames]
     dataframe = pd.concat(from_files_data, axis=1)
 
-    dataset = [item for item in data if item['score']
-               >= lower and item['score'] <= upper]
+    # dataset = [item for item in data if item['score']
+    #            >= lower and item['score'] <= upper]
 
     plottable_df = []
     for pl_v in pl_list:
@@ -108,29 +110,38 @@ def scatter_reg(filename, csv_filenames):
 
     # plt.axis([-15, 30, -15, 30])
     # plt.figure(figsize=(12, 8))
-    fig, axes = plt.subplots(2, 3)
-    for index_1, top in enumerate(plottable):
+    _, axes = plt.subplots(2, 3)
+    for index_1, _ in enumerate(plottable):
         s_in = 0
         for p_df in plottable_df[index_1]:
             p_df = p_df.loc[:, ~p_df.columns.duplicated()]
-            for index_2, d in enumerate(p_df):
+            y_max, y_min = np.amax(p_df.iloc[:, 0]), np.amin(p_df.iloc[:, 0])
+            x_max, x_min = np.amax(p_df.values), np.amin(p_df.values)
+            print(f"x-{x_max} y-{y_max}")
+            for _, d in enumerate(p_df):
                 if p_df.iloc[:, 0].name != d:
                     truncate = True
-                    print(set(p_df[d]))
                     if len(set(p_df[d])) > 1:
                         truncate = False
+                    #print(set(p_df[d]))
                     s = sns.regplot(ax=axes[index_1, s_in], y=p_df.iloc[:, 0].name, x=d,
-                                    data=p_df, ci=None, truncate=truncate,line_kws={'linewidth': 0.6}, scatter_kws={'alpha': 0.5})
-                    s.set_ylim([-8, 32])
-                    s.set_xlim([-8, 24])
+                                    data=p_df, ci=None, truncate=truncate, line_kws={'linewidth': 0.6}, scatter_kws={'alpha': 0.5})
+                    s.set_ylim([y_min - (y_max*PLOT_MARGIN), y_max + (y_max*PLOT_MARGIN)])
+                    s.set_xlim([x_min - (x_max*PLOT_MARGIN), x_max + (x_max*PLOT_MARGIN)])
+            name = p_df.iloc[:, 0].name
+            try:
+                int(name.split(",")[0])
+                name = "".join(name.split(",")[1:])
+            except:
+                name = name
             axes[index_1, s_in].set_title(
-                p_df.iloc[:, 0].name, fontdict={'fontsize': 20})
+                name, fontdict={'fontsize': 25})
             # axes[index_1, s_in].set_yticklabels([[0, 0.2, 0.4, 0.6, 0.8, 1.0]])
             # axes[index_1, s_in].set_xticklabels([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-            # s.set(xlabel=" ")
-            # s.set(ylabel=" ")
-            s.set_ylabel("€",horizontalalignment='right', y=1.0, labelpad=-8, fontsize=16)
-            s.set_xlabel("€",horizontalalignment='right', x=1.0, labelpad=-8, fontsize=16)
+            s.set(xlabel=" ")
+            s.set(ylabel=" ")
+            # s.set_ylabel("€",horizontalalignment='right', y=1.05, labelpad=-16, fontsize=16)
+            # s.set_xlabel("€",horizontalalignment='right', x=1.05, labelpad=-8, fontsize=16)
             s_in += 1
     plt.show()
 
@@ -159,7 +170,7 @@ def scatter(filename, csv_filenames, name_list):
         plt.show()
 
 
-def mean(filename, output, allow_same=False):
+def mean(filename, output, allow_same=False, get_top=False) -> dict:
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
 
@@ -190,27 +201,32 @@ def mean(filename, output, allow_same=False):
         else:
             mean_d[item] = "N/A"
 
+    mean_d = {k: v for k, v in sorted(mean_d.items(), reverse=True, key=lambda item: item[1])}
     with open(f"{output}.csv", encoding='utf-8', mode='w') as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, delimiter=";")
         writer.writerow(['Response variable', 'Mean R squared'])
         for i in mean_d:
             writer.writerow([i, mean_d[i]])
+
+    if get_top:
+        top = [i for i in mean_d if mean_d[i] != 0][:3]
+        bot = [i for i in mean_d if mean_d[i] != 0][-3:]
+        return [top, bot]
 
 
 # mean("correlation_rimi milk_to_other shop milk.json", "rimi_to_other_mean", True)
 # scatter("correlation_pizza_to_wheat_beef.json",
 #         ["pizza.csv", "beef.csv", "wheat.csv"])
-scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"])
+# scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"])
 
 # mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean")
 # mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean")
 # mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pigmeat_mean")
 # mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean")
+
+cwpa_plot = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
+scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/pear.csv", "datasets/apple.csv", "datasets/wheat.csv"], cwpa_plot)
+
+
 # scatter("correlation_rimi milk_to_other shop milk.json",
 #         ["datasets/rimi milk.csv", "datasets/other shop milk.csv"], topmost)
-
-
-# d = pd.read_csv("cake.csv")
-# print(d[plottable])
-# d = pd.read_csv("wheat.csv")
-# print(d)
