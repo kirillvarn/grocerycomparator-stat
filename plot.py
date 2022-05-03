@@ -66,6 +66,8 @@ font = {'family': 'monospace',
 
 
 PLOT_MARGIN = 0.1
+HEIGHT = 1920
+WIDTH = 1200
 
 def scatter_reg(filename, csv_filenames, plottable):
     with open(filename, "r", encoding="utf-8") as file:
@@ -96,7 +98,7 @@ def scatter_reg(filename, csv_filenames, plottable):
 
     # dataset = [item for item in data if item['score']
     #            >= lower and item['score'] <= upper]
-
+    # plt.figure(figsize=((HEIGHT/96), (WIDTH/96)), dpi=96)
     plottable_df = []
     for pl_v in pl_list:
         df_l_temp = []
@@ -110,14 +112,13 @@ def scatter_reg(filename, csv_filenames, plottable):
 
     # plt.axis([-15, 30, -15, 30])
     # plt.figure(figsize=(12, 8))
-    _, axes = plt.subplots(2, 3)
+    figure, axes = plt.subplots(2, 3, figsize=(18, 10))
     for index_1, _ in enumerate(plottable):
         s_in = 0
         for p_df in plottable_df[index_1]:
             p_df = p_df.loc[:, ~p_df.columns.duplicated()]
             y_max, y_min = np.amax(p_df.iloc[:, 0]), np.amin(p_df.iloc[:, 0])
             x_max, x_min = np.amax(p_df.values), np.amin(p_df.values)
-            print(f"x-{x_max} y-{y_max}")
             for _, d in enumerate(p_df):
                 if p_df.iloc[:, 0].name != d:
                     truncate = True
@@ -129,6 +130,7 @@ def scatter_reg(filename, csv_filenames, plottable):
                     s.set_ylim([y_min - (y_max*PLOT_MARGIN), y_max + (y_max*PLOT_MARGIN)])
                     s.set_xlim([x_min - (x_max*PLOT_MARGIN), x_max + (x_max*PLOT_MARGIN)])
             name = p_df.iloc[:, 0].name
+            name = (name[:44] + '..') if len(name) > 44 else name
             try:
                 int(name.split(",")[0])
                 name = "".join(name.split(",")[1:])
@@ -143,7 +145,10 @@ def scatter_reg(filename, csv_filenames, plottable):
             # s.set_ylabel("€",horizontalalignment='right', y=1.05, labelpad=-16, fontsize=16)
             # s.set_xlabel("€",horizontalalignment='right', x=1.05, labelpad=-8, fontsize=16)
             s_in += 1
-    plt.show()
+    # plt.show()
+    png_fname = filename.split(".")[0] + ".png"
+    plt.tight_layout()
+    plt.savefig(f"plots/{png_fname}", format="png", bbox_inches='tight')
 
 
 def scatter(filename, csv_filenames, name_list):
@@ -224,8 +229,21 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
 # mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pigmeat_mean")
 # mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean")
 
-cwpa_plot = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
-scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/pear.csv", "datasets/apple.csv", "datasets/wheat.csv"], cwpa_plot)
+# cwpa_plot = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
+# scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/pear.csv", "datasets/apple.csv", "datasets/wheat.csv"], cwpa_plot)
+
+plott = mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean", get_top=True)
+scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
+
+plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
+scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
+
+plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
+scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
+
+plott = mean("correlation_cake_to_wheat_pear_apple.json", "pizza_to_wheat_pear_apple_mean", get_top=True)
+scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
+
 
 
 # scatter("correlation_rimi milk_to_other shop milk.json",

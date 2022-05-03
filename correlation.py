@@ -26,9 +26,9 @@ from cormodule.cor import correlate_by_one
 # correlate_by_one("datasets/rimi milk.csv", ["datasets/apple.csv", "datasets/eggs.csv", "datasets/beef.csv"])
 
 correlate_by_one("datasets/cake.csv", ["datasets/wheat.csv", "datasets/pear.csv", "datasets/apple.csv"])
-correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/beef.csv"])
-correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/pig meat.csv"])
-correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/chicken.csv"])
-correlate_by_one("datasets/cake.csv", ["datasets/wheat.csv", "datasets/milk.csv"])
+# correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/beef.csv"])
+# correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/pig meat.csv"])
+# correlate_by_one("datasets/pizza.csv", ["datasets/wheat.csv", "datasets/chicken.csv"])
+# correlate_by_one("datasets/cake.csv", ["datasets/wheat.csv", "datasets/milk.csv"])
 
 # correlate_by_one("datasets/rimi milk.csv", ["datasets/other shop milk.csv"], allow_same=True)
