@@ -8,7 +8,8 @@ import csv
 # sns.color_palette("flare", as_cmap=True)
 # sns.set_theme(style="darkgrid")
 # sns.set_context("paper")
-plt.style.use(['science'])
+# plt.style.use(['science', 'no-latex'])
+
 
 # topmost = [
 #     "498187, Šokolaadikook, ERIK ORGU, 325 g",
@@ -119,6 +120,7 @@ def scatter_reg(filename, csv_filenames, plottable):
             p_df = p_df.loc[:, ~p_df.columns.duplicated()]
             y_max, y_min = np.amax(p_df.iloc[:, 0]), np.amin(p_df.iloc[:, 0])
             x_max, x_min = np.amax(p_df.values), np.amin(p_df.values)
+            labels = []
             for _, d in enumerate(p_df):
                 if p_df.iloc[:, 0].name != d:
                     truncate = True
@@ -129,6 +131,8 @@ def scatter_reg(filename, csv_filenames, plottable):
                                     data=p_df, ci=None, truncate=truncate, line_kws={'linewidth': 0.6}, scatter_kws={'alpha': 0.5})
                     s.set_ylim([y_min - (y_max*PLOT_MARGIN), y_max + (y_max*PLOT_MARGIN)])
                     s.set_xlim([x_min - (x_max*PLOT_MARGIN), x_max + (x_max*PLOT_MARGIN)])
+                    labels.append(d)
+                    figure.legend(labels=labels)
             name = p_df.iloc[:, 0].name
             name = (name[:44] + '..') if len(name) > 44 else name
             try:
@@ -145,6 +149,8 @@ def scatter_reg(filename, csv_filenames, plottable):
             # s.set_ylabel("€",horizontalalignment='right', y=1.05, labelpad=-16, fontsize=16)
             # s.set_xlabel("€",horizontalalignment='right', x=1.05, labelpad=-8, fontsize=16)
             s_in += 1
+            plt.show()
+
     # plt.show()
     png_fname = filename.split(".")[0] + ".png"
     plt.tight_layout()
@@ -186,6 +192,13 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
     for i in dep_v:
         val_l[i] = []
 
+    with open(f"{output}_full_list.csv", encoding='utf-8', mode='w', newline='') as f:
+        writer = csv.writer(f, delimiter=";")
+        writer.writerow(['Response variable', 'Predictor variable', 'R squared'])
+        for item in data:
+            writer.writerow([item["dependent"], item["independent_parameters"], item["score"]])
+
+
     for item in data:
         score = item['score']
         if score < 0:
@@ -207,7 +220,7 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
             mean_d[item] = "N/A"
 
     mean_d = {k: v for k, v in sorted(mean_d.items(), reverse=True, key=lambda item: item[1])}
-    with open(f"{output}.csv", encoding='utf-8', mode='w') as f:
+    with open(f"{output}.csv", encoding='utf-8', mode='w', newline='') as f:
         writer = csv.writer(f, delimiter=";")
         writer.writerow(['Response variable', 'Mean R squared'])
         for i in mean_d:
@@ -219,32 +232,51 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
         return [top, bot]
 
 
-# mean("correlation_rimi milk_to_other shop milk.json", "rimi_to_other_mean", True)
-# scatter("correlation_pizza_to_wheat_beef.json",
-#         ["pizza.csv", "beef.csv", "wheat.csv"])
-# scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"])
+def plot_names(dependent, csv_files, filename):
+    from_files_data = [pd.read_csv(f, dtype=np.float32) for f in csv_files]
+    dataframe = pd.concat(from_files_data, axis=1)
 
-# mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean")
-# mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean")
-# mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pigmeat_mean")
-# mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean")
+    with open(filename, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    indep = [[j.lstrip("parameter ") for j in i["independent_parameters"]] for i in data if i['score'] != 1]
+    indep = np.array(indep).flatten().tolist()
+    indep = list(set(indep))
 
-# cwpa_plot = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
-# scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/pear.csv", "datasets/apple.csv", "datasets/wheat.csv"], cwpa_plot)
+    plt.tight_layout()
+    for name in indep:
+        truncate = True
+        if len(set(dataframe[name])) > 1:
+            truncate = False
+        s = sns.regplot(y=dependent, x=name, data=dataframe, ci=None, truncate=truncate, line_kws={'linewidth': 1.0}, scatter_kws={'alpha': 0.5})
+        fig = s.get_figure()
+        filename = f"{dependent}_{name}"
+        filename = "".join(x for x in filename if x.isalnum()) + ".png"
+        try:
+            fig.savefig(f"plot_t/{filename}", format="png", bbox_inches='tight')
+        except:
+            print(f"Could not save: {filename}")
+        fig.clf()
 
-plott = mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean", get_top=True)
-scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
 
-plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
-scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
+# plot_names(["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "498187, Šokolaadikook, ERIK ORGU, 325 g", ['468784, Toorpiim pastöriseerimata, NOPRI, 1 l', '194913, Nisujahu 00 Il Molino Chiavazza 1kg'])
 
-plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
-scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
-
-plott = mean("correlation_cake_to_wheat_pear_apple.json", "pizza_to_wheat_pear_apple_mean", get_top=True)
-scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
+plot_names("498187, Šokolaadikook, ERIK ORGU, 325 g", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "correlation_cake_to_wheat_milk.json")
 
 
+# plott = mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean", get_top=True)
+# scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
+
+# plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
+# scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
+
+# plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
+# scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
+
+# plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
+# scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
+
+# plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean", get_top=True)
+# scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/milk.csv"], plott)
 
 # scatter("correlation_rimi milk_to_other shop milk.json",
 #         ["datasets/rimi milk.csv", "datasets/other shop milk.csv"], topmost)
