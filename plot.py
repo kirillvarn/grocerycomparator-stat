@@ -8,7 +8,7 @@ import csv
 # sns.color_palette("flare", as_cmap=True)
 # sns.set_theme(style="darkgrid")
 # sns.set_context("paper")
-# plt.style.use(['science', 'no-latex'])
+plt.style.use(['science', 'grayscale', 'grid'])
 
 
 # topmost = [
@@ -242,17 +242,20 @@ def plot_names(dependent, csv_files, filename):
     indep = np.array(indep).flatten().tolist()
     indep = list(set(indep))
 
-    plt.tight_layout()
+    # plt.tight_layout()
     for name in indep:
         truncate = True
         if len(set(dataframe[name])) > 1:
             truncate = False
-        s = sns.regplot(y=dependent, x=name, data=dataframe, ci=None, truncate=truncate, line_kws={'linewidth': 1.0}, scatter_kws={'alpha': 0.5})
+        s = sns.regplot(y=dependent, x=name, data=dataframe, ci=None, truncate=truncate, line_kws={'linewidth': 1.0})
+        xl = name.replace("%", "\%")
+        s.set_xlabel(f"{xl} (€)")
+        s.set_ylabel(f"{dependent} (€)")
         fig = s.get_figure()
         filename = f"{dependent}_{name}"
         filename = "".join(x for x in filename if x.isalnum()) + ".png"
         try:
-            fig.savefig(f"plot_t/{filename}", format="png", bbox_inches='tight')
+            fig.savefig(f"plot_t/{filename}", format="png", bbox_inches='tight', dpi=300)
         except:
             print(f"Could not save: {filename}")
         fig.clf()
