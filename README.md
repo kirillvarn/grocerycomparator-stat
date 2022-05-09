@@ -17,6 +17,7 @@ In the 'regression.py' file, there are SQL queries to the database -- you can us
 ```
 
 \"%s\" -- stands for "%s" in the actual query, just avoiding a lot of string concatenations with +
+
 %%banaan%% -- python's pcyopg2 interpeters single % as a query parameter (like %s we declared before)
 
 NB! The product names should be in estonian!
