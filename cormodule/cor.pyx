@@ -83,7 +83,7 @@ cpdef void correlate_by_one(str dependent_file, list independent_files, bint all
                 coeff = reg.coef_
 
                 for cf in range(coeff.shape[0]):
-                    param_coef_l[f"parameter {t_array.tolist()[cf]}"] = coeff[cf]
+                    param_coef_l[t_array.tolist()[cf]] = coeff[cf]
 
                 y_pred = reg.predict(x_test)
                 score = r2_score(y_test, y_pred)

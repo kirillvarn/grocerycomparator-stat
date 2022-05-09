@@ -261,24 +261,34 @@ def plot_names(dependent, csv_files, filename):
         fig.clf()
 
 
+def draw_line(csv_f):
+    from_files_data = [pd.read_csv(f, dtype=np.float32) for f in csv_f]
+    df = pd.concat(from_files_data, axis=1)
+
+    for i in df.columns:
+        sns.lineplot(data=df, x=df[i], y=df["498187, Šokolaadikook, ERIK ORGU, 325 g"])
+        plt.show()
+
 # plot_names(["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "498187, Šokolaadikook, ERIK ORGU, 325 g", ['468784, Toorpiim pastöriseerimata, NOPRI, 1 l', '194913, Nisujahu 00 Il Molino Chiavazza 1kg'])
 
-plot_names("498187, Šokolaadikook, ERIK ORGU, 325 g", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "correlation_cake_to_wheat_milk.json")
+# plot_names("498187, Šokolaadikook, ERIK ORGU, 325 g", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "correlation_cake_to_wheat_milk.json")
+# draw_line(["datasets/cake.csv" ,"datasets/milk.csv"])
 
-
-# plott = mean("correlation_pizza_to_wheat_beef.json", "pizza_to_wheat_beef_mean", get_top=True)
+plott = mean("correlation_pizza_to_beef.json", "pizza_to_beef_mean", get_top=True)
 # scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
 
-# plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
+plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
 # scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
 
 # plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
 # scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
 
-# plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
+plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
 # scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
 
-# plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean", get_top=True)
+plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean", get_top=True)
+plott = mean("correlation_cookies_to_wheat_sugar_milk.json", "cookie_to_wheat_sugar_milk_mean", get_top=True)
+plott = mean("correlation_pizza_to_wheat_tomatoes_chicken.json", "pizza_to_wheat_tomatoes_chicken_mean", get_top=True)
 # scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/milk.csv"], plott)
 
 # scatter("correlation_rimi milk_to_other shop milk.json",
