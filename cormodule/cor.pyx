@@ -63,7 +63,6 @@ cpdef void correlate_by_one(str dependent_file, list independent_files, bint all
     print("")
     for dep in range(dependent_arr):
         for prod_tuple in range(tuple_array):
-            param_coef_l = {}
             print ("\033[A                             \033[A")
             print(f"{process}/{completion_p} done.")
             y = dependent_data.iloc[:, dep].values
@@ -76,23 +75,26 @@ cpdef void correlate_by_one(str dependent_file, list independent_files, bint all
                     dataf.insert(0, t_val, arr[~np.isnan(arr)])
 
                 x = dataf
-                x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0)
+                if len(set(x.values.flatten())) > len(x.columns) or allow_same:
+                    param_coef_l = {}
 
-                reg = LinearRegression()
-                reg.fit(x_train, y_train)
-                coeff = reg.coef_
+                    x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0)
 
-                for cf in range(coeff.shape[0]):
-                    param_coef_l[t_array.tolist()[cf]] = coeff[cf]
+                    reg = LinearRegression()
+                    reg.fit(x_train, y_train)
+                    coeff = reg.coef_
 
-                y_pred = reg.predict(x_test)
-                score = r2_score(y_test, y_pred)
+                    for cf in range(coeff.shape[0]):
+                        param_coef_l[t_array.tolist()[cf]] = coeff[cf]
 
-                #if score > 0.1:
-                #    if score <= 0.95:
-                t_array = np.array(t_array)
-                cor_d = {"dependent": dependent_data.columns[dep], "independent_parameters": param_coef_l, "score": score}
-                correlation.append(cor_d)
+                    y_pred = reg.predict(x_test)
+                    score = r2_score(y_test, y_pred)
+
+                    #if score > 0.1:
+                    #    if score <= 0.95:
+                    t_array = np.array(t_array)
+                    cor_d = {"dependent": dependent_data.columns[dep], "independent_parameters": param_coef_l, "score": score}
+                    correlation.append(cor_d)
             process += 1
         print ("\033[A                             \033[A")
         print(f"{dependent_data.columns[dep]} is done. Progress: {file_count} out of {dependent_arr }")

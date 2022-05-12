@@ -7,7 +7,6 @@ import csv
 import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 warnings.simplefilter('ignore', ConvergenceWarning)
-import scipy.stats
 # sns.color_palette("flare", as_cmap=True)
 # sns.set_theme(style="darkgrid")
 # sns.set_context("paper")
@@ -199,7 +198,7 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
     for i in dep_v:
         val_l[i] = []
 
-    with open(f"{output}_full_list.csv", encoding='utf-8', mode='w', newline='') as f:
+    with open(f"mean/{output}_full_list.csv", encoding='utf-8', mode='w', newline='') as f:
         writer = csv.writer(f, delimiter=";")
         writer.writerow(['Response variable', 'Predictor variable', 'R squared'])
         for item in data:
@@ -287,24 +286,27 @@ def draw_line(csv_f):
 # plot_names("498187, Šokolaadikook, ERIK ORGU, 325 g", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "correlation_cake_to_wheat_milk.json")
 # draw_line(["datasets/cake.csv" ,"datasets/milk.csv"])
 
-plott = mean("correlation_pizza_to_beef.json", "pizza_to_beef_mean", get_top=True)
 # scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
 
-plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
 # scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
 
-plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_to_wheat_pig meat_mean", get_top=True)
-scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
+# scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
 
-plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
-scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
+# scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
 
-plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
-scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
+plott = mean("correlation_pizza_to_banana_tomatoes_chicken.json", "pizza_to_banana_tomatoes_chicken_mean", get_top=True)
 
-plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_milk_mean", get_top=True)
-scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/milk.csv"], plott)
-print("Done saving scatters.")
+# plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_nilk_mean", get_top=True)
+# plott = mean("correlation_pizza_to_beef.json", "pizza_to_beef_mean", get_top=True)
+# plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_wheat_pig_mean", get_top=True)
+#plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
+# plott = mean("correlation_cookies_to_sugar_milk.json", "cookies_to_sugar_milk_mean", get_top=True)
+# scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
+
+# plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
+#plott = mean("correlation_pizza_to_wheat_tomatoes_chicken.json", "pizza_to_wheat_tomato_chicken_mean", get_top=True)
+# scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/milk.csv"], plott)
+# print("Done saving scatters.")
 
 # scatter("correlation_rimi milk_to_other shop milk.json",
 #         ["datasets/rimi milk.csv", "datasets/other shop milk.csv"], topmost)
