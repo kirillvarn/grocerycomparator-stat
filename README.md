@@ -10,7 +10,7 @@ Datasets folders containts product prices by the categories in .csv format.
 
 If you want, you can get the data from the server youself, there is roughly 46,000 products for every day starting from 6th of March and till 5th of May (~2mil of total records).
 
-In the 'regression.py' file, there are SQL queries to the database -- you can use whatever query you feel like using. For instance, to get all entries from Rimi and Prisma market, that contain 'banana' you simply:
+In the 'fetch.py' file, there are SQL queries to the database -- you can use whatever query you feel like using. For instance, to get all entries from Rimi and Prisma market, that contain 'banana' you simply:
 
 ```
 "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND name ILIKE '%%banaan%%' AND (shop_name == 'prisma' OR shop_name == 'rimi');"
