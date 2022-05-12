@@ -25,6 +25,6 @@ NB! The product names should be in estonian!
 
 
 
-#Building cormodule
+# Building cormodule
 
 To build cormodule, make sure you have Cython installed and from cormodule folder run build.cmd script, it will automatically build all files.
