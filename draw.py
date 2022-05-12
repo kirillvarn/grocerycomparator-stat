@@ -7,57 +7,7 @@ import csv
 import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 warnings.simplefilter('ignore', ConvergenceWarning)
-# sns.color_palette("flare", as_cmap=True)
-# sns.set_theme(style="darkgrid")
-# sns.set_context("paper")
 
-
-# topmost = [
-#     "498187, Šokolaadikook, ERIK ORGU, 325 g",
-#     "31655, Erik Orgu kohupiimakook, ERIK ORGU, 325 g",
-#     "984488, Toorjuustukook sidrunimaitseline Farmi 250g"]
-
-
-# lowmost = [
-#     "Pasha kook 300 g, EESTI PAGAR",
-#     "Napoleoni kook EESTI PAGAR, 1.2kg",
-#     "Meekook EESTI PAGAR, 1kg"]
-
-# topmost = [
-# "5282, Pitsapõhjapulber, VILMA, 400 g",
-# "4721, Õhukese pitsapõhja pulber, VILMA, 400 g",
-# "30931, Kiviahjupizza Hawaii, GRANDIOSA, 350 g",
-# "30390, Kiviahjupizza Superiore for Meat Lovers, GRANDIOSA, 350 g"
-# ]
-
-# lowmost = [
-# "Külm. pitsa Supreme MEGA DI CATO,380g",
-# "Pitsakate NÕO, 300g",
-# "Külm.pitsa VICI suits.pepperoniga,300g",
-# "Külm.pitsa VICI Neapoli tomat-oliiv.,300"
-# ]
-
-# topmost = ["200289, Piim Alma kile 2,5% 1l", "812489, Piim Rimi 2,5% 1l"]
-# lowmost = []
-
-# topmost = [
-#     "30390, Kiviahjupizza Superiore for Meat Lovers, GRANDIOSA, 350 g",
-#     "30931, Kiviahjupizza Hawaii, GRANDIOSA, 350 g",
-#     "4721, Õhukese pitsapõhja pulber, VILMA, 400 g",
-#     "5282, Pitsapõhjapulber, VILMA, 400 g"
-# ]
-
-# lowmost = [
-#     "Külm. pitsa Supreme MEGA DI CATO,380g",
-#     "Külm. pitsa Mafia MEGA DI CATO,380g",
-#     "Pitsakate NÕO, 300g",
-#     "812436, Pitsa Rimi Basic singi ja seente 325g"
-# ]
-
-# plottable = [topmost, lowmost]
-
-
-#lottable = ["32239, Šokolaadi-Napoleoni kook, EESTI PAGAR, 400 g", "Küpsisekook 280 g, EESTI PAGAR", "810062, Maasika-jogurtikook Rimi 350g", "32779, Mustasõstra-passionikook, PAGARINI, 300 g", "812238, Britta kook Rimi 300g"]
 
 lower = 0
 upper = 1
@@ -70,13 +20,14 @@ font = {'family': 'monospace',
 PLOT_MARGIN = 0.25
 HEIGHT = 1920
 WIDTH = 1200
-
-def scatter_reg(filename, csv_filenames, plottable):
+'''
+ filenname: .json file with correlation data
+ csv_filename: list of .csv files with price data
+ plottable: 2D array with topmost and lowermost dependent parameters
+'''
+def scatter_reg(filename: str, csv_filenames: list[str], plottable: list):
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
-
-    # dep_names = list(set([i['dependent'] for i in data]))
-    # dep_names = plottable
 
     pl_list = []
     for p_item in plottable:
@@ -98,9 +49,6 @@ def scatter_reg(filename, csv_filenames, plottable):
     from_files_data = [pd.read_csv(f, dtype=np.float32) for f in csv_filenames]
     dataframe = pd.concat(from_files_data, axis=1)
 
-    # dataset = [item for item in data if item['score']
-    #            >= lower and item['score'] <= upper]
-    # plt.figure(figsize=((HEIGHT/96), (WIDTH/96)), dpi=96)
     plottable_df = []
     for pl_v in pl_list:
         df_l_temp = []
@@ -112,9 +60,7 @@ def scatter_reg(filename, csv_filenames, plottable):
             df_l_temp.append(fin_df)
         plottable_df.append(df_l_temp)
 
-    # plt.axis([-15, 30, -15, 30])
-    # plt.figure(figsize=(12, 8))
-    figure, axes = plt.subplots(2, 3, figsize=(19, 11))
+    _, axes = plt.subplots(2, 3, figsize=(19, 11))
     for index_1, _ in enumerate(plottable):
         s_in = 0
         for p_df in plottable_df[index_1]:
@@ -128,9 +74,6 @@ def scatter_reg(filename, csv_filenames, plottable):
                     if len(set(p_df[d])) > 1:
                         s = sns.regplot(ax=axes[index_1, s_in], y=p_df.iloc[:, 0].name, x=d,
                                         data=p_df, ci=None, truncate=False, robust=True, line_kws={'linewidth': 0.6}, scatter_kws={'alpha': 0.5})
-
-                        # y_delta = np.abs(np.abs(y_max) - np.abs(y_min)) * PLOT_MARGIN
-                        # x_delta = np.abs(np.abs(x_max) - np.abs(x_min)) * PLOT_MARGIN
 
                         y_delta = 0.2
                         x_delta = 1.4
@@ -147,23 +90,21 @@ def scatter_reg(filename, csv_filenames, plottable):
                 name = name
             axes[index_1, s_in].set_title(
                 name, fontdict={'fontsize': 21})
-            # axes[index_1, s_in].set_yticklabels([[0, 0.2, 0.4, 0.6, 0.8, 1.0]])
-            # axes[index_1, s_in].set_xticklabels([0, 0.2, 0.4, 0.6, 0.8, 1.0])
             s.set(xlabel=" ")
             s.set(ylabel=" ")
-            # s.set_ylabel("€",horizontalalignment='right', y=1.05, labelpad=-16, fontsize=16)
-            # s.set_xlabel("€",horizontalalignment='right', x=1.05, labelpad=-8, fontsize=16)
             s_in += 1
-            # plt.show()
 
-    # plt.show()
     png_fname = filename.split(".")[0] + ".png"
     plt.tight_layout()
 
     plt.savefig(f"plots/{png_fname}", format="png", bbox_inches='tight', dpi=300)
 
-
-def scatter(filename, csv_filenames, name_list):
+'''
+    filename: .json file with correlation data
+    csv_filenames: list of .csv files with independent parameters
+    name_list: list of dependent parameters
+'''
+def scatter(filename: str, csv_filenames: list[str], name_list: list[str]):
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
 
@@ -171,7 +112,6 @@ def scatter(filename, csv_filenames, name_list):
     dataframe = pd.concat(from_files_data, axis=1)
 
     dataframe_rimi = from_files_data[0]
-    dataframe_other = from_files_data[1]
 
     for name in name_list:
         cols = dataframe_rimi.columns.to_list()
@@ -186,8 +126,13 @@ def scatter(filename, csv_filenames, name_list):
         s.set_xlabel(f"Other milk (\u20ac)", fontsize=30)
         plt.show()
 
-
-def mean(filename, output, allow_same=False, get_top=False) -> dict:
+'''
+    filename: .json filename with correlation data
+    output: output .csv file
+    allow_same: do you want to allow the same x and y values?
+    get_top: return top 3 values
+'''
+def mean(filename: str, output: str, allow_same=False, get_top=False) -> dict:
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
 
@@ -237,8 +182,12 @@ def mean(filename, output, allow_same=False, get_top=False) -> dict:
         bot = [i for i in mean_d if mean_d[i] != 0][-3:]
         return [top, bot]
 
-
-def plot_names(dependent, csv_files, filename):
+'''
+    dependent: product name from the datasets
+    csv_files: list of csv_files where your independent paramters are stored
+    filename: output filename
+'''
+def plot_names(dependent: str, csv_files: list, filename: str):
     from_files_data = [pd.read_csv(f, dtype=np.float32) for f in csv_files]
     dataframe = pd.concat(from_files_data, axis=1)
 
@@ -280,36 +229,3 @@ def draw_line(csv_f):
     for i in df.columns:
         sns.lineplot(data=df, x=df[i], y=df["498187, Šokolaadikook, ERIK ORGU, 325 g"])
         plt.show()
-
-# plot_names(["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "498187, Šokolaadikook, ERIK ORGU, 325 g", ['468784, Toorpiim pastöriseerimata, NOPRI, 1 l', '194913, Nisujahu 00 Il Molino Chiavazza 1kg'])
-
-# plot_names("498187, Šokolaadikook, ERIK ORGU, 325 g", ["datasets/cake.csv", "datasets/milk.csv", "datasets/wheat.csv"], "correlation_cake_to_wheat_milk.json")
-# draw_line(["datasets/cake.csv" ,"datasets/milk.csv"])
-
-# scatter_reg("correlation_pizza_to_wheat_beef.json", ["datasets/pizza.csv", "datasets/beef.csv", "datasets/wheat.csv"], plott)
-
-# scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
-
-# scatter_reg("correlation_pizza_to_wheat_pig meat.json", ["datasets/pizza.csv", "datasets/pig meat.csv", "datasets/wheat.csv"], plott)
-
-# scatter_reg("correlation_pizza_to_wheat_chicken.json", ["datasets/pizza.csv", "datasets/chicken.csv", "datasets/wheat.csv"], plott)
-
-plott = mean("correlation_pizza_to_banana_tomatoes_chicken.json", "pizza_to_banana_tomatoes_chicken_mean", get_top=True)
-
-# plott = mean("correlation_cake_to_wheat_milk.json", "cake_to_wheat_nilk_mean", get_top=True)
-# plott = mean("correlation_pizza_to_beef.json", "pizza_to_beef_mean", get_top=True)
-# plott = mean("correlation_pizza_to_wheat_pig meat.json", "pizza_wheat_pig_mean", get_top=True)
-#plott = mean("correlation_pizza_to_wheat_chicken.json", "pizza_to_wheat_chicken_mean", get_top=True)
-# plott = mean("correlation_cookies_to_sugar_milk.json", "cookies_to_sugar_milk_mean", get_top=True)
-# scatter_reg("correlation_cake_to_wheat_pear_apple.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/pear.csv",  "datasets/apple.csv"], plott)
-
-# plott = mean("correlation_cake_to_wheat_pear_apple.json", "cake_to_wheat_pear_apple_mean", get_top=True)
-#plott = mean("correlation_pizza_to_wheat_tomatoes_chicken.json", "pizza_to_wheat_tomato_chicken_mean", get_top=True)
-# scatter_reg("correlation_cake_to_wheat_milk.json", ["datasets/cake.csv", "datasets/wheat.csv", "datasets/milk.csv"], plott)
-# print("Done saving scatters.")
-
-# scatter("correlation_rimi milk_to_other shop milk.json",
-#         ["datasets/rimi milk.csv", "datasets/other shop milk.csv"], topmost)
-
-
-# plt.style.use(['science', 'grayscale', 'grid', 'no-latex'])

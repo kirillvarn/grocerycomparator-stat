@@ -1,12 +1,7 @@
-import main
+import repo
 import export.csv as csv
 
 # CONSTANTS
-not_all = ["taldrik", "geel", "šampoo", "paber", "vahend", "colgate", "blend-a-", "jordan", "dušš", "tampoon", "mähkme", "Pesukaitsmed", "Hügieenisidemed", "dove", "katlakivi", "värskendaja", "wc-", "küünal", "koeratoit", "kassikonserv", "kasstoit", "kiisueine", "rätik", "tuletikud", "kruus", "tualett", "prügi", "svamm", "nõudupesu", "värvid", "patarei", "vihik", "pliiats", "pastakas ", "käteseep", "palsam", "vannisool", "deodorant", "seep ", "plaastrid", "hambahari", "kondoomid", "rasedus", "toidulisand", "küünel", "raseeri", "huulepalsam", "varutera", "toidul.", "näomask", "sokid ", "tallad ", "põlvikud", "bellissima", "helkur", "sukkpüks", "foolium", "mayeri", "potiroos", "kotimaista", "kõrvaklap", "kaabel", "raadio", "magnetoola", "kõlar", "teler", "pult ", "antenn", "tolmukott", "kann", "mikser", "blender", "pliit", "röster", "masin", "tolmuimeja", "masseer", "lõikur", "juuksehari", "triikraud", "keetja", "PS4", "playstation", "arvutihiir", "klaviatuur", "PS5", "tindikassett", "veebi", "nsw ", "xbox one", "ruuter", "mälikaart", "adapter", "mänguhiir", "tahvelarvuti", "ümbris", "canon ", "nintendo", "xbox", "kaaned", "kahvel", "nuga", "lusikas", "kauss", "klaaspurk", "klaas ", "meeste", "kikilips", "vöö", "särk", "saapad", "jalats", "toasuss", "sussid", "puhastus", "eemaldaja", "vedelik"]
-
-not_all_string_list = [f"AND name NOT ILIKE '%%{st}%%'" for st in not_all]
-joined_st = " ".join(not_all_string_list)
-
 milk_q = "SELECT * FROM \"%s\" WHERE price != 0 AND discount = false AND (name ILIKE '%%1l%%' OR name ILIKE '%%1 l%%') AND (name ILIKE '%%piim %%' OR name ILIKE '%%piim,%%') AND name NOT ILIKE '%%juust%%' AND name NOT ILIKE '%%kohupiim%%' AND name NOT ILIKE '%%laktoos%%' AND name NOT ILIKE '%%täis%%' AND name NOT ILIKE '%%kookos%%' AND name NOT ILIKE '%%latte%%'"
 wheat_kilos = 1
 query_to_parse: dict = {
@@ -30,14 +25,14 @@ query_to_parse: dict = {
 }
 
 def get_products():
-    return main.get_prices(main.connect(db="naive_products"))[1]
+    return repo.get_prices(repo.connect(db="naive_products"))[1]
 
 
 def get_products_by_name(name: str = "", query: str = ""):
     if len(name) != 0:
-        return main.get_prices(main.connect(db="naive_products"), search_string=name)[1]
+        return repo.get_prices(repo.connect(db="naive_products"), search_string=name)[1]
     else:
-        return main.get_prices(main.connect(db="naive_products"), query=query)[1]
+        return repo.get_prices(repo.connect(db="naive_products"), query=query)[1]
 
 def get_normalized_price(data: list) -> list:
     new_data = list()
