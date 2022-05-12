@@ -21,3 +21,10 @@ In the 'fetch.py' file, there are SQL queries to the database -- you can use wha
 %%banaan%% -- python's pcyopg2 interpeters single % as a query parameter (like %s we declared before)
 
 NB! The product names should be in estonian!
+
+
+
+
+#Building cormodule
+
+To build cormodule, make sure you have Cython installed and from cormodule folder run build.cmd script, it will automatically build all files.
