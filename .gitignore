@@ -21,8 +21,7 @@ token.json
 *.bat
 *.build
 *.exe
-*.cmd
-
+start_venv*
 # json
 *.json
 

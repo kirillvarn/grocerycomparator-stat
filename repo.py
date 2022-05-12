@@ -15,15 +15,6 @@ connection = psycopg2.extensions.connection
 
 # SETTING UP THE CONNECTION #
 
-# products
-# conn = psycopg2.connect(dbname=user_data['dbname'], user=user_data['username'],
-#                        password=user_data['password'], host=user_data['host'], port=user_data['port'])
-
-# naive products
-# conn_naive = psycopg2.connect(dbname=user_data['naive_dbname'], host=user_data['host'],
-#                              port=user_data['port'], user=user_data['username'], password=user_data['password'])
-
-
 def connect(retries=0, db='products'):
     try:
         CONNECTION = psycopg2.connect(dbname=db, user=user_data['username'],
