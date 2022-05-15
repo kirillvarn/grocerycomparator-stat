@@ -1,0 +1,73 @@
+,filename,model,score,,,,
+0,lasso_correlation_cake_to_milk.json,LASSO Linear Regression,0.232280764,,,,
+1,lasso_correlation_cake_to_milk_wheat.json,LASSO Linear Regression,0.363551165,,,,
+2,lasso_correlation_cake_to_pear_apple_wheat.json,LASSO Linear Regression,0.366025662,,,,
+3,lasso_correlation_cake_to_wheat.json,LASSO Linear Regression,0.375830312,,,,
+4,lasso_correlation_pizza_to_beef.json,LASSO Linear Regression,0.257508203,,,,Pizza
+5,lasso_correlation_pizza_to_wheat.json,LASSO Linear Regression,0.182199337,,ridge_correlation_pizza_to_beef.json,Ridge Linear Regression,0.211184212
+6,lasso_correlation_pizza_to_wheat_beef.json,LASSO Linear Regression,0.227990295,,ridge_correlation_pizza_to_wheat.json,Ridge Linear Regression,0.332375082
+7,lregression_correlation_cake_to_milk.json,Simple Regression Regression,0.329290459,,ridge_correlation_pizza_to_wheat_beef.json,Ridge Linear Regression,0.319986383
+8,lregression_correlation_cake_to_milk_wheat.json,Multivariate Regression Regression,0.399908693,,lregression_correlation_pizza_to_beef.json,Simple Regression Regression,0.222140851
+9,lregression_correlation_cake_to_pear_apple_wheat.json,Multivariate Regression Regression,0.379413838,,lregression_correlation_pizza_to_wheat.json,Simple Regression Regression,0.331734367
+10,lregression_correlation_cake_to_wheat.json,Simple Regression Regression,0.405371,,lregression_correlation_pizza_to_wheat_beef.json,Multivariate Regression Regression,0.322186093
+11,lregression_correlation_pizza_to_beef.json,Simple Regression Regression,0.222140851,,lasso_correlation_pizza_to_beef.json,LASSO Linear Regression,0.257508203
+12,lregression_correlation_pizza_to_wheat.json,Simple Regression Regression,0.331734367,,lasso_correlation_pizza_to_wheat.json,LASSO Linear Regression,0.182199337
+13,lregression_correlation_pizza_to_wheat_beef.json,Multivariate Regression Regression,0.322186093,,lasso_correlation_pizza_to_wheat_beef.json,LASSO Linear Regression,0.227990295
+14,ridge_correlation_cake_to_milk.json,Ridge Linear Regression,0.282730576,,,,Cake
+15,ridge_correlation_cake_to_milk_wheat.json,Ridge Linear Regression,0.388650724,,ridge_correlation_cake_to_milk.json,Ridge Linear Regression,0.282730576
+16,ridge_correlation_cake_to_pear_apple_wheat.json,Ridge Linear Regression,0.382027133,,ridge_correlation_cake_to_milk_wheat.json,Ridge Linear Regression,0.388650724
+17,ridge_correlation_cake_to_wheat.json,Ridge Linear Regression,0.403415676,,ridge_correlation_cake_to_pear_apple_wheat.json,Ridge Linear Regression,0.382027133
+18,ridge_correlation_pizza_to_beef.json,Ridge Linear Regression,0.211184212,,ridge_correlation_cake_to_wheat.json,Ridge Linear Regression,0.403415676
+19,ridge_correlation_pizza_to_wheat.json,Ridge Linear Regression,0.332375082,,lregression_correlation_cake_to_milk.json,Simple Regression Regression,0.329290459
+20,ridge_correlation_pizza_to_wheat_beef.json,Ridge Linear Regression,0.319986383,,lregression_correlation_cake_to_milk_wheat.json,Multivariate Regression Regression,0.399908693
+,,,,,lregression_correlation_cake_to_pear_apple_wheat.json,Multivariate Regression Regression,0.379413838
+,,,,,lregression_correlation_cake_to_wheat.json,Simple Regression Regression,0.405371
+,,,,,lasso_correlation_cake_to_milk.json,LASSO Linear Regression,0.232280764
+,,,,,lasso_correlation_cake_to_milk_wheat.json,LASSO Linear Regression,0.363551165
+,,,,,lasso_correlation_cake_to_pear_apple_wheat.json,LASSO Linear Regression,0.366025662
+,,,,,lasso_correlation_cake_to_wheat.json,LASSO Linear Regression,0.375830312
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,Linear,,
+,,,,,lregression_correlation_pizza_to_beef.json,Simple Regression Regression,0.222140851
+,,,,,lregression_correlation_pizza_to_wheat.json,Simple Regression Regression,0.331734367
+,,,,,lregression_correlation_pizza_to_wheat_beef.json,Multivariate Regression Regression,0.322186093
+,,,,,lregression_correlation_cake_to_milk.json,Simple Regression Regression,0.329290459
+,,,,,lregression_correlation_cake_to_milk_wheat.json,Multivariate Regression Regression,0.399908693
+,,,,,lregression_correlation_cake_to_pear_apple_wheat.json,Multivariate Regression Regression,0.379413838
+,,,,,lregression_correlation_cake_to_wheat.json,Simple Regression Regression,0.405371
+,,,,,,mean,0.341435043
+,,,,,,cake,0.378495998
+,,,,,,pizza,0.292020437
+,,,,,,,
+,,,,,Ridge,,
+,,,,,,,
+,,,,,Response; predictor,Model,Score
+,,,,,Pizza; beef,Ridge  Regression,0.211184212
+,,,,,Pizza; flour,Ridge  Regression,0.332375082
+,,,,,"Pizza; flour, beef",Ridge  Regression,0.319986383
+,,,,,Cake; milk,Ridge  Regression,0.282730576
+,,,,,"Cake; milk, flour",Ridge  Regression,0.388650724
+,,,,,"Cake, pear, apple, flour",Ridge  Regression,0.382027133
+,,,,,"Cake, flour",Ridge  Regression,0.403415676
+,,,,,,mean,0.331481398
+,,,,,,cake,0.364206027
+,,,,,,pizza,0.287848559
+,,,,,Lasso,,
+,,,,,,,
+,,,,,Response; predictor,Model,Score
+,,,,,Cake; milk,LASSO  Regression,0.232280764
+,,,,,"Cake; milk, flour",LASSO  Regression,0.363551165
+,,,,,"Cake, pear, apple, flour",LASSO  Regression,0.366025662
+,,,,,"Cake, flour",LASSO  Regression,0.375830312
+,,,,,Pizza; beef,LASSO  Regression,0.257508203
+,,,,,Pizza; flour,LASSO  Regression,0.182199337
+,,,,,"Pizza; flour, beef",LASSO  Regression,0.227990295
+,,,,,,mean,0.286483677
+,,,,,,cake,0.334421976
+,,,,,,pizza,0.222565945
+,,,,,,,
+,,,,,, ,

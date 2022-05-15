@@ -1,6 +1,10 @@
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Lars
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
+from sklearn.gaussian_process import GaussianProcessRegressor
 import json
 import os
 import pandas as pd
@@ -11,19 +15,19 @@ import itertools
 cimport numpy as np
 np.import_array()
 
-cpdef void write_to_file(str filename, data, list correlate_to=[]):
+cpdef void write_to_file(str filename, data, list correlate_to=[], model="lregression"):
     correlate_to = [x.split("/")[1] for x in correlate_to]
     filename = filename.split("/")[1]
     cdef str c_to_string = "_".join(correlate_to)
     fname = filename if len(
         correlate_to) == 0 else f"correlation_{filename}_to_{c_to_string}"
-
+    fname = model + "_" + fname
     with open(f"{fname}.json", "w", encoding='UTF8') as f:
         jsob = json.dumps(data, ensure_ascii=False)
         f.write(jsob)
 
 
-cpdef void correlate_by_one(str dependent_file, list independent_files, bint allow_same=False):
+cpdef void correlate_by_one(str dependent_file, list independent_files, bint allow_same=False, str model="lregression"):
     cdef list correlation = []
     cdef list headers = []
     cdef np.ndarray[object, ndim=2] i_files_product
@@ -76,31 +80,36 @@ cpdef void correlate_by_one(str dependent_file, list independent_files, bint all
 
                 x = dataf
                 if len(set(x.values.flatten())) > len(x.columns) or allow_same:
-                    param_coef_l = {}
-
                     x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0)
+                    if model == "lregression":
+                        ml_model = LinearRegression()
 
-                    reg = LinearRegression()
-                    reg.fit(x_train, y_train)
-                    coeff = reg.coef_
+                    if model == "gaussian":
+                        ml_model = GaussianProcessRegressor(random_state=0)
 
-                    for cf in range(coeff.shape[0]):
-                        param_coef_l[t_array.tolist()[cf]] = coeff[cf]
+                    if model == "ridge":
+                        ml_model = Ridge(alpha=0.01)
 
-                    y_pred = reg.predict(x_test)
+                    if model == "lars":
+                        ml_model = Lars(n_nonzero_coefs=1, normalize=False)
+
+                    if model == "lasso":
+                        ml_model = Lasso(alpha=0.01)
+
+
+                    ml_model.fit(x_train, y_train)
+                    y_pred = ml_model.predict(x_test)
                     score = r2_score(y_test, y_pred)
 
-                    #if score > 0.1:
-                    #    if score <= 0.95:
-                    t_array = np.array(t_array)
-                    cor_d = {"dependent": dependent_data.columns[dep], "independent_parameters": param_coef_l, "score": score}
-                    correlation.append(cor_d)
+                    if score > 0 and score <= 0.95:
+                        cor_d = {"dependent": dependent_data.columns[dep], "model": model, "independent_parameters": t_array.tolist(), "score": score}
+                        correlation.append(cor_d)
             process += 1
         print ("\033[A                             \033[A")
         print(f"{dependent_data.columns[dep]} is done. Progress: {file_count} out of {dependent_arr }")
         file_count += 1
         print("")
-    write_to_file(filename, correlation, i_fname)
+    write_to_file(filename, correlation, i_fname, model=model)
 
 # each dependent is being regressed to whole independent dataset
 cpdef void correlate(str first_file, list other_files=[], bint each=False):
