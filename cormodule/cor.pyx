@@ -1,7 +1,7 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Lars
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import RidgeCV
+from sklearn.linear_model import LassoCV
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -11,9 +11,13 @@ import pandas as pd
 import numpy as np
 import itertools
 
+from sklearn.exceptions import ConvergenceWarning
+from warnings import simplefilter
 # C imports
 cimport numpy as np
 np.import_array()
+
+simplefilter("ignore", category=ConvergenceWarning)
 
 cpdef void write_to_file(str filename, data, list correlate_to=[], model="lregression"):
     correlate_to = [x.split("/")[1] for x in correlate_to]
@@ -26,90 +30,81 @@ cpdef void write_to_file(str filename, data, list correlate_to=[], model="lregre
         jsob = json.dumps(data, ensure_ascii=False)
         f.write(jsob)
 
-
 cpdef void correlate_by_one(str dependent_file, list independent_files, bint allow_same=False, str model="lregression"):
     cdef list correlation = []
     cdef list headers = []
-    cdef np.ndarray[object, ndim=2] i_files_product
+    cdef set i_files_product
     cdef list i_fname
     cdef dict cor_d
     cdef str filename = dependent_file.split(".")[0]
     cdef int process = 0
-    cdef Py_ssize_t dep, prod_tuple
+    cdef Py_ssize_t dep
+    cdef tuple prod_tuple
     cdef unsigned short file_count = 1
-    #cdef float[:] x_train, x_test, y_train, y_test, y_pred
 
-    dependent_data = pd.read_csv(dependent_file, dtype=np.float32)
-    from_files_data = [pd.read_csv(f, dtype=np.float32)
-                       for f in independent_files]
+    print(independent_files)
 
-    headers = [list(x.keys()) for x in from_files_data]
+    dependent_data = pd.read_csv(dependent_file, dtype=np.double)
+    from_files_data = [pd.read_csv(f, dtype=np.double)
+                    for f in independent_files]
 
+    headers = [list(x.keys()) for x in from_files_data][0]
+    print(headers)
     dataset = pd.concat(from_files_data)
-    i_files_product = np.array(tuple(itertools.product(*headers)), dtype=object)
-
+    i_files_product = set(itertools.combinations(headers, r=len(independent_files)))
     i_fname = [x.split(".")[0] for x in independent_files]
-
-    cdef int completion_p = dependent_data.shape[1] * i_files_product.shape[0]
+    print(i_files_product)
+    exit()
 
     cdef Py_ssize_t dependent_arr = dependent_data.shape[1]
-    cdef Py_ssize_t tuple_array = i_files_product.shape[0]
     cdef float score
     cdef dict param_coef_l = {}
     cdef float[:] coeff
     cdef unsigned short produc_len = dependent_data.shape[0]
-    cdef np.ndarray[np.float32_t, ndim=1] y
-    cdef np.ndarray[np.str, ndim=1] t_array
+    cdef np.ndarray[np.double_t, ndim=1] y
+    #cdef np.ndarray[np.str, ndim=1] t_array
     cdef str t_val
-    cdef np.ndarray[float, ndim=1] arr, y_pred
+    cdef np.ndarray[double, ndim=1] arr, y_pred
     cdef unsigned short cf
 
-    print("")
-    for dep in range(dependent_arr):
-        for prod_tuple in range(tuple_array):
-            print ("\033[A                             \033[A")
-            print(f"{process}/{completion_p} done.")
-            y = dependent_data.iloc[:, dep].values
-            if len(set(y)) > 1 or allow_same:
-                dataf = pd.DataFrame()
-                t_array = i_files_product[prod_tuple]
+    try:
+        for dep in range(dependent_arr):
+            for prod_tuple in i_files_product:
+                y = dependent_data.iloc[:, dep].values
+                if len(set(y)) > 1 or allow_same:
+                    dataf = pd.DataFrame()
+                    #t_array = prod_tuple
 
-                for t_val in t_array:
-                    arr = np.array(dataset[t_val].values)
-                    dataf.insert(0, t_val, arr[~np.isnan(arr)])
+                    for t_val in prod_tuple:
+                        arr = np.array(dataset[t_val].values)
+                        dataf.insert(0, t_val, arr[~np.isnan(arr)])
 
-                x = dataf
-                if len(set(x.values.flatten())) > len(x.columns) or allow_same:
-                    x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0)
-                    if model == "lregression":
-                        ml_model = LinearRegression()
+                    x = dataf
+                    if len(set(x.values.flatten())) > len(x.columns) or allow_same:
+                        x_train, x_test, y_train, y_test = train_test_split( x, y, test_size=0.2, random_state=0, shuffle=False)
+                        if model == "lregression":
+                            ml_model = LinearRegression()
 
-                    if model == "gaussian":
-                        ml_model = GaussianProcessRegressor(random_state=0)
+                        if model == "ridge":
+                            ml_model = RidgeCV()
 
-                    if model == "ridge":
-                        ml_model = Ridge(alpha=0.01)
-
-                    if model == "lars":
-                        ml_model = Lars(n_nonzero_coefs=1, normalize=False)
-
-                    if model == "lasso":
-                        ml_model = Lasso(alpha=0.01)
+                        if model == "lasso":
+                            ml_model = LassoCV()
 
 
-                    ml_model.fit(x_train, y_train)
-                    y_pred = ml_model.predict(x_test)
-                    score = r2_score(y_test, y_pred)
+                        ml_model.fit(x_train, y_train)
+                        y_pred = ml_model.predict(x_test)
+                        score = r2_score(y_test, y_pred)
 
-                    if score > 0 and score <= 0.95:
-                        cor_d = {"dependent": dependent_data.columns[dep], "model": model, "independent_parameters": t_array.tolist(), "score": score}
-                        correlation.append(cor_d)
-            process += 1
-        print ("\033[A                             \033[A")
-        print(f"{dependent_data.columns[dep]} is done. Progress: {file_count} out of {dependent_arr }")
-        file_count += 1
-        print("")
-    write_to_file(filename, correlation, i_fname, model=model)
+                        if score > 0 and score <= 0.95:
+                            cor_d = {"dependent": dependent_data.columns[dep], "model": model, "independent_parameters": prod_tuple, "score": score}
+                            correlation.append(cor_d)
+                process += 1
+            print(f"{dependent_data.columns[dep]} is done. Progress: {file_count} out of {dependent_arr }")
+            file_count += 1
+        write_to_file(filename, correlation, i_fname, model=model)
+    except Exception as e:
+        print(e)
 
 # each dependent is being regressed to whole independent dataset
 cpdef void correlate(str first_file, list other_files=[], bint each=False):

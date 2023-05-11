@@ -1,0 +1,11 @@
+,dependent,independent,score,coef,intercept
+0,"1002617, Pitsa Ristorante Mozzarella gl.free 370g","['Kalew nisujahu T-405 1kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9495379328727721,[0.99537037 2.9589372 ],-5.802824074074066
+1,"1002617, Pitsa Ristorante Mozzarella gl.free 370g","['28345, Ülipeen nisujahu T00, REGGIA, 1 kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9495379328727721,[1.19444444 2.9589372 ],-6.636944444444437
+2,"296859, Singi-ja šampinjonipitsa külmut. 425g","['5462, Eriti hea nisujahu, VESKI MATI, 1 kg', '194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg']",0.9486786723136901,[0.    0.621 0.   ],2.2378099999999987
+3,"1002617, Pitsa Ristorante Mozzarella gl.free 370g","['28345, Ülipeen nisujahu T00, REGGIA, 1 kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9475771188735961,[0.118232   2.69428428],-4.0762885056241105
+4,"1002617, Pitsa Ristorante Mozzarella gl.free 370g","['Kalew nisujahu T-405 1kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9475129842758171,[0.27442197 2.66258141],-4.0936636659055035
+5,"952601, Pitsataigen Eesti Pagar 2x300g","['103334, Nisujahu T-405 Kalew 1kg', '194913, Nisujahu 00 Il Molino Chiavazza 1kg']",0.947478652000427,[0.21158612 1.09467233],-1.8359179407353503
+6,"952601, Pitsataigen Eesti Pagar 2x300g","['Nisujahu T-405 1 kg, KALEW', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9449498057365411,[0.         1.04484877],-1.785923913043479
+7,"952601, Pitsataigen Eesti Pagar 2x300g","['Coop T-405 nisujahu 1kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9444887042045591,[0.36091708 1.40174606],-3.2432326337258406
+8,"1002617, Pitsa Ristorante Mozzarella gl.free 370g","['28345, Ülipeen nisujahu T00, REGGIA, 1 kg', '194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg']",0.944034993648529,[1.17460598 1.35859126 1.35859126],-4.251138053253812
+9,"952601, Pitsataigen Eesti Pagar 2x300g","['Coop T-550 nisujahu 1kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9434854984283441,[0.         1.04484877],-1.785923913043479

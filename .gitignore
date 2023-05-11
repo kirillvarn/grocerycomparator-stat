@@ -35,3 +35,6 @@ bin
 *.sh
 *_mean*
 *.so
+
+*.png
+*test*

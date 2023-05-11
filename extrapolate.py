@@ -27,5 +27,5 @@ def extrapolate_prices(inflation : int) -> list:
     dataset = pd.concat([dataset, extr_dataset])
     return dataset.reset_index(drop=True)
 
-dataset = extrapolate_prices(2.47)
+dataset = extrapolate_prices(25)
 dataset.to_csv("datasets/extrapolate/extrapolated_products.csv")

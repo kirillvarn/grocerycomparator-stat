@@ -1,0 +1,11 @@
+,dependent,model,independent_parameters,score
+22612,"968346, Porgandikook Eesti Pagar 300g",lregression,"['933791, Pirn Conference pakitud väike 2kl 1kg', '269163, Õun Paula Idared 1kl, kg', 'Coop T-550 nisujahu 1kg']",0.9495379729991581
+2372,"934052, Pitsa salaami ja chorizo Feliciana 320g",ridge,"['194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg', '951622, Lihaveise Flank steik 400g']",0.9490422270370981
+2605,"934052, Pitsa salaami ja chorizo Feliciana 320g",lregression,"['194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg', '951622, Lihaveise Flank steik 400g']",0.948858279767368
+35996,"810068, Kohupiimakook Rimi 320g",lregression,"['285538, Pirn Lucas 1kl, kg', 'Õun RED DELICIOUS 1kl., kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.948801971624157
+14430,"954361, Kook soolase karamelliga vegan 190g",lregression,"['285538, Pirn Lucas 1kl, kg', 'Granaatõun, kg', 'Tartu Mill Täistera nisujahu  1kg']",0.948692309613639
+2198,"952601, Pitsataigen Eesti Pagar 2x300g",lregression,"['194913, Nisujahu 00 Il Molino Chiavazza 1kg', '30937, Veisepraad kondita, KARNI, kg']",0.9485977478732641
+1226,"298171, Õuna-rabarberikook ELT 800g",lasso,"['Piim 2,5%, 1 l, ALMA', '194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg']",0.948356518703901
+2962,"296859, Singi-ja šampinjonipitsa külmut. 425g",lregression,"['194914, Nisujahu 00 Pitsa Il Molino Chiavazza 1kg', 'Lihaveise välisfilee steik 360 g, RAKVERE']",0.948176155726242
+57993,"Kiivimaitseline kook MK, 440g",lregression,"['933791, Pirn Conference pakitud väike 2kl 1kg', '281840, Õun Kanzi 1kl, kg', 'Tartu Mill Täistera nisujahu  1kg']",0.948135485913264
+36135,"810068, Kohupiimakook Rimi 320g",lregression,"['285538, Pirn Lucas 1kl, kg', '297318, Õun Granny Smith 1kl Rimi kg', '1002360, Nisujahu 0 Manitoba Il Molino Chiavazza 1kg']",0.9479422276442551
